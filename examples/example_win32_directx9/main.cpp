@@ -22,6 +22,49 @@ void CleanupDeviceD3D();
 void ResetDevice();
 LRESULT WINAPI WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
+void embraceTheDarkness()
+{
+    ImGuiStyle& style = ImGui::GetStyle();
+    style.WindowRounding = 5.3f;
+    style.FrameRounding = 2.3f;
+    style.ScrollbarRounding = 0;
+
+    style.Colors[ImGuiCol_Text] = ImVec4(0.90f, 0.90f, 0.90f, 0.90f);
+    style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
+    style.Colors[ImGuiCol_WindowBg] = ImVec4(0.09f, 0.09f, 0.15f, 1.00f);
+    style.Colors[ImGuiCol_PopupBg] = ImVec4(0.05f, 0.05f, 0.10f, 0.85f);
+    style.Colors[ImGuiCol_Border] = ImVec4(0.70f, 0.70f, 0.70f, 0.65f);
+    style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+    style.Colors[ImGuiCol_FrameBg] = ImVec4(0.00f, 0.00f, 0.01f, 1.00f);
+    style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.90f, 0.80f, 0.80f, 0.40f);
+    style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.90f, 0.65f, 0.65f, 0.45f);
+    style.Colors[ImGuiCol_TitleBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.83f);
+    style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.40f, 0.40f, 0.80f, 0.20f);
+    style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.00f, 0.00f, 0.00f, 0.87f);
+    style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.01f, 0.01f, 0.02f, 0.80f);
+    style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.20f, 0.25f, 0.30f, 0.60f);
+    style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.55f, 0.53f, 0.55f, 0.51f);
+    style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.56f, 0.56f, 0.56f, 1.00f);
+    style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.56f, 0.56f, 0.56f, 0.91f);
+    style.Colors[ImGuiCol_CheckMark] = ImVec4(0.90f, 0.90f, 0.90f, 0.83f);
+    style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.70f, 0.70f, 0.70f, 0.62f);
+    style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.30f, 0.30f, 0.30f, 0.84f);
+    style.Colors[ImGuiCol_Button] = ImVec4(0.48f, 0.72f, 0.89f, 0.49f);
+    style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.50f, 0.69f, 0.99f, 0.68f);
+    style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.80f, 0.50f, 0.50f, 1.00f);
+    style.Colors[ImGuiCol_Header] = ImVec4(0.30f, 0.69f, 1.00f, 0.53f);
+    style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.44f, 0.61f, 0.86f, 1.00f);
+    style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.38f, 0.62f, 0.83f, 1.00f);
+    style.Colors[ImGuiCol_ResizeGrip] = ImVec4(1.00f, 1.00f, 1.00f, 0.85f);
+    style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(1.00f, 1.00f, 1.00f, 0.60f);
+    style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(1.00f, 1.00f, 1.00f, 0.90f);
+    style.Colors[ImGuiCol_PlotLines] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+    style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
+    style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
+    style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
+    style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.00f, 0.00f, 1.00f, 0.35f);
+}
+
 // Main code
 int main(int, char**)
 {
@@ -29,7 +72,7 @@ int main(int, char**)
     //ImGui_ImplWin32_EnableDpiAwareness();
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
     ::RegisterClassExW(&wc);
-    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Dear ImGui DirectX9 Example", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
+    HWND hwnd = ::CreateWindowW(wc.lpszClassName, L"Strategy Algorithm", WS_OVERLAPPEDWINDOW, 100, 100, 1280, 800, nullptr, nullptr, wc.hInstance, nullptr);
 
     // Initialize Direct3D
     if (!CreateDeviceD3D(hwnd))
@@ -51,7 +94,8 @@ int main(int, char**)
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
     // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsDark();
+    embraceTheDarkness();
     //ImGui::StyleColorsLight();
 
     // Setup Platform/Renderer backends
@@ -64,7 +108,7 @@ int main(int, char**)
     bool simple_layout = false;
     bool tree_contributor = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-    
+
     // Main loop
     bool done = false;
     while (!done)
@@ -126,8 +170,8 @@ int main(int, char**)
         };
         std::vector<std::tuple<std::string, int, int, int >> list_market{
             std::make_tuple("A", 500, 1500,0),
-            std::make_tuple("E", 2500, 5000,4),
-            std::make_tuple("C", 1500, 3000,2),
+            std::make_tuple("E", 320, 5000,4),
+            std::make_tuple("C", 650, 3000,2),
             std::make_tuple("B", 1000, 2500,1),
             std::make_tuple("D", 2500, 4000,3),
         };
@@ -155,8 +199,8 @@ int main(int, char**)
             static int selected = 0;
             {
                 ImGui::BeginChild("left pane", ImVec2(150, 0), true);
-               
-                
+
+
                 for (const auto& item : menu_sidebar) {
                     char label[128];
                     sprintf(label, std::strcpy(label, item.first.c_str()));
@@ -183,9 +227,9 @@ int main(int, char**)
                             ImGui::SetNextItemOpen(true, ImGuiTreeNodeFlags_DefaultOpen);
                             if (ImGui::TreeNode("Kontributor"))
                             {
-                                ImGui::BulletText("Nama\t-\tNIM");
-                                ImGui::BulletText("Andhika loiz\t-\t1301210336");
-                                ImGui::BulletText("Ichwan Rizky Wahyudin\t-\t1301213434");
+                                ImGui::BulletText("Caecarryo Bagus Dewanata - 1301213514");
+                                ImGui::BulletText("Andhika loiz - 1301210336");
+                                ImGui::BulletText("Ichwan Rizky Wahyudin - 1301213434");
                                 ImGui::TreePop();
                             }
                             ImGui::Text("\nID: 0x%d", menu_sidebar[selected].second);
@@ -217,7 +261,7 @@ int main(int, char**)
                                     ImGui::Text("%d", (std::get<1>(list_market[row]) == NULL) ? 0 : std::get<1>(list_market[row]));
 
                                     ImGui::TableSetColumnIndex(2);
-                                    ImGui::Text("UP");
+                                    ImGui::Text("%d", (std::get<1>(list_market[row]) == NULL) ? 0 : std::get<2>(list_market[row]));
                                 }
                                 ImGui::EndTable();
                             }
@@ -226,24 +270,27 @@ int main(int, char**)
                         ImGui::Text("\nID: 0x%d", menu_sidebar[selected].second);
                     }
 
+                    // Calculate
                     if (menu_sidebar[selected].second == 2) {
                         enum ContentsType { CT_Text, CT_FillButton };
                         static int contents_type = CT_Text;
                         static int nominal = 0;
                         static bool btn_state = false;
-                    
 
                         if (ImGui::BeginTabItem("Calculate")) {
-                            ImGui::BeginChild("data", ImVec2(0,70),true);
+                            size_t tuple_size = std::tuple_size<decltype(list_market)::value_type>::value;
+                            // Input value
+                            {
+                                ImGui::BeginChild("data", ImVec2(0, 70), true);
                                 ImGui::Text("Masukan Uang yang dimiliki : ");
                                 ImGui::InputInt("##input", &nominal);
                                 if (nominal < 0) nominal = 0;
-                            ImGui::EndChild();
-                            size_t tuple_size = std::tuple_size<decltype(list_market)::value_type>::value;
+                                ImGui::EndChild();
+                            }
 
+                            // List Market
                             {
                                 ImGui::BeginGroup();
-                                // List Market
                                 ImGui::BeginChild("list_market", ImVec2(1400, list_market.size() * 30), true);
                                 ImGui::Text("List Market saat ini:");
                                 static ImGuiTableFlags flags_table = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
@@ -274,116 +321,151 @@ int main(int, char**)
 
                             // Greedy Solution
                             {
-                                    static bool selected_item[10];
-                                    ImGui::BeginChild("list_greedy", ImVec2(1400, list_market.size() * 30), true);
-                                        ImGui::Text("Greedy:");
-                                        static ImGuiTableFlags flags_table = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-                                        if (ImGui::BeginTable("tb_greedy", 4, flags_table)) {
-                                            ImGui::TableSetupColumn("Jenis Investasi",0.10f);
-                                            ImGui::TableSetupColumn("Cost");
-                                            ImGui::TableSetupColumn("Profit");
-                                            ImGui::TableSetupColumn("Ratio profit(Profit / Cost)");
+                                static bool selected_item[10];
+                                ImGui::BeginChild("list_greedy", ImVec2(1400, list_market.size() * 30), true);
+                                ImGui::Text("Greedy:");
+                                static ImGuiTableFlags flags_table = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+                                if (ImGui::BeginTable("tb_greedy", 4, flags_table, ImVec2(1400, 0))) {
+                                    ImGui::TableSetupColumn("Jenis Investasi", 0.10f);
+                                    ImGui::TableSetupColumn("Cost");
+                                    ImGui::TableSetupColumn("Profit");
+                                    ImGui::TableSetupColumn("Ratio profit(Profit / Cost)");
 
-                                            ImGui::TableHeadersRow();
+                                    ImGui::TableHeadersRow();
 
-                                            Greedy_h *greedy = new Greedy_h();
-                                            std::vector<std::tuple<std::string, int, int, int >> market_sorted = greedy->sort_market(list_market);
+                                    Greedy_h* greedy = new Greedy_h();
+                                    std::vector<std::tuple<std::string, int, int, int >> market_sorted = greedy->sort_market(list_market);
 
-                                            for (int row = 0; row < market_sorted.size(); ++row) {
-                                                ImGui::TableNextRow();
-                                                ImGui::TableSetColumnIndex(0);
-                                                ImGui::Selectable(std::get<0>(market_sorted[row]).c_str(), &selected_item[std::get<3>(market_sorted[row])]);
+                                    for (int row = 0; row < market_sorted.size(); ++row) {
+                                        ImGui::TableNextRow();
+                                        ImGui::TableSetColumnIndex(0);
+                                        ImGui::Selectable(std::get<0>(market_sorted[row]).c_str(), &selected_item[std::get<3>(market_sorted[row])]);
 
-                                                ImGui::TableSetColumnIndex(1);
-                                                ImGui::Text("%d", (std::get<1>(market_sorted[row]) == NULL) ? 0 : std::get<1>(market_sorted[row]));
+                                        ImGui::TableSetColumnIndex(1);
+                                        ImGui::Text("%d", (std::get<1>(market_sorted[row]) == NULL) ? 0 : std::get<1>(market_sorted[row]));
 
-                                                ImGui::TableSetColumnIndex(2);
-                                                ImGui::Text("%d", (std::get<2>(market_sorted[row]) == NULL) ? 0 : std::get<2>(market_sorted[row]));
+                                        ImGui::TableSetColumnIndex(2);
+                                        ImGui::Text("%d", (std::get<2>(market_sorted[row]) == NULL) ? 0 : std::get<2>(market_sorted[row]));
 
-                                                ImGui::TableSetColumnIndex(3);
-                                                ImGui::Text("x%.1f", (float)std::get<2>(market_sorted[row]) / std::get<1>(market_sorted[row]));
-                                            }
+                                        ImGui::TableSetColumnIndex(3);
+                                        ImGui::Text("x%.1f", (float)std::get<2>(market_sorted[row]) / std::get<1>(market_sorted[row]));
+                                    }
 
-                                            ImGui::EndTable();
-                                        }
-                                    ImGui::EndChild();
+                                    ImGui::EndTable();
+                                }
+                                ImGui::EndChild();
                                 ImGui::EndGroup();
 
                                 ImGui::SameLine();
 
                                 // Summary Greedy
                                 ImGui::BeginGroup();
-                                    Greedy_h *greedy = new Greedy_h();
+                                Greedy_h* greedy = new Greedy_h();
 
-                                    ImGui::BeginChild("greedy", ImVec2(335, (list_market.size() * 30) * 2), true);
-                                        ImGui::Text("Asset yang diambil menggunakan Greedy : ");
-                                        if (ImGui::BeginTable("split1", 5, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
-                                        {
-                                            for (auto& it = list_market.begin(); it != list_market.end(); ++it) {
-                                                ImGui::TableNextColumn();
-                                                ImGui::Selectable(std::get<0>(*it).c_str(), &selected_item[std::get<3>(*it)]);
-                                            }
+                                ImGui::BeginChild("greedy", ImVec2(335, (list_market.size() * 30) * 2), true);
+                                ImGui::Text("Greedy : ");
+                                if (ImGui::BeginTable("split1", 5, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+                                {
+                                    for (auto& it = list_market.begin(); it != list_market.end(); ++it) {
+                                        ImGui::TableNextColumn();
+                                        ImGui::Selectable(std::get<0>(*it).c_str(), &selected_item[std::get<3>(*it)]);
+                                    }
 
 
-                                            ImGui::EndTable();
-                                        }
-                                        ImGui::Spacing();
+                                    ImGui::EndTable();
+                                }
+                                ImGui::Spacing();
 
-                                        ImGui::Text("Solusi Greedy :");
+                                ImGui::Text("Solusi Greedy :");
 
-                                        std::vector<bool> solution = std::get<2>(greedy->get_profit_cost(list_market,nominal));
-                                        std::reverse(solution.begin(), solution.end());
-                                        for (int i = 0; i < 5; ++i)
-                                            selected_item[std::get<3>(list_market[i])] = solution[std::get<3>(list_market[i])];
-                                        for (int i = 0; i < 5; ++i) {
-                                            ImGui::SameLine();
-                                            ImGui::Text("%d ", selected_item[std::get<3>(list_market[i])]);
-                                        }
+                                std::vector<bool> solution = std::get<2>(greedy->get_profit_cost(list_market, nominal));
+                                std::reverse(solution.begin(), solution.end());
+                                for (int i = 0; i < 5; ++i)
+                                    selected_item[std::get<3>(list_market[i])] = solution[std::get<3>(list_market[i])];
+                                for (int i = 0; i < 5; ++i) {
+                                    ImGui::SameLine();
+                                    ImGui::Text("%d ", selected_item[std::get<3>(list_market[i])]);
+                                }
 
-                                        for (auto& it = list_market.begin(); it != list_market.end(); ++it) {
-                                            if(selected_item[std::get<3>(*it)])
-                                                ImGui::BulletText(std::get<0>(*it).c_str(), &selected_item[std::get<3>(*it)]);
-                                        }
+                                for (auto& it = list_market.begin(); it != list_market.end(); ++it) {
+                                    if (selected_item[std::get<3>(*it)])
+                                        ImGui::BulletText(std::get<0>(*it).c_str(), &selected_item[std::get<3>(*it)]);
+                                }
 
-                                        ImGui::Text("\nTotal Profit : %d", std::get<0>(greedy->get_profit_cost(list_market,nominal)) );
-                                        ImGui::Text("\nTotal Cost : %d", std::get<1>(greedy->get_profit_cost(list_market,nominal)) );
-                                    ImGui::EndChild();
+                                ImGui::Text("\nTotal Profit : %d", std::get<0>(greedy->get_profit_cost(list_market, nominal)));
+                                ImGui::Text("\nTotal Cost : %d", std::get<1>(greedy->get_profit_cost(list_market, nominal)));
+                                ImGui::Text("\nSisa Uang : %d", nominal - std::get<1>(greedy->get_profit_cost(list_market, nominal)));
+                                ImGui::EndChild();
                                 ImGui::EndGroup();
                             }
 
+                            // Dynamic Solution
                             {
-                                // Dynamic Solution
                                 ImGui::BeginGroup();
-                                    static bool selected_item_row[10] = {};
-                                    static bool selected_item_col[10] = {};
-                                    static ImGuiTableFlags flags_table = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-                                    ImGui::BeginChild("d_programing", ImVec2(1400, list_market.size() * 30), true);
-                                        ImGui::Text("Dynamic Programming:");
+                                static bool selected_item[10] = {};
+                                static ImGuiTableFlags flags_table = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
+                                ImGui::BeginChild("d_programing", ImVec2(1400, list_market.size() * 30), true);
+                                ImGui::Text("Dynamic Programming:");
 
-                                        if (ImGui::BeginTable("tb_greedy", 4, flags_table)) {
+                                if (ImGui::BeginTable("tb_greedy", 4, flags_table)) {
 
-                                            ImGui::TableSetupColumn("Jenis Investasi", 0.10f);
-                                            ImGui::TableSetupColumn("Cost");
-                                            ImGui::TableSetupColumn("Profit");
-                                            ImGui::TableSetupColumn("Ratio profit(Profit / Cost)");
+                                    ImGui::TableSetupColumn("Jenis Investasi", 0.10f);
+                                    ImGui::TableSetupColumn("Cost");
+                                    ImGui::TableSetupColumn("Profit");
+                                    ImGui::TableSetupColumn("Ratio profit(Profit / Cost)");
 
-                                            ImGui::TableHeadersRow();
+                                    ImGui::TableHeadersRow();
 
-                                            for (int row = 0; row < list_market.size(); ++row) {
-                                                char label[32];
-                                                ImGui::TableNextRow();
-                                                ImGui::TableSetColumnIndex(0);
-                                                ImGui::Selectable(std::get<0>(list_market[row]).c_str(), &selected_item_row[row]);
-                                                ImGui::TableSetColumnIndex(1);
-                                                ImGui::Selectable(std::to_string(std::get<1>(list_market[row])).c_str(), &selected_item_col[row]);
-                                                ImGui::TableSetColumnIndex(2);
-                                                ImGui::Selectable(std::to_string(std::get<2>(list_market[row])).c_str(), &selected_item_col[row]);
-                                            }
+                                    for (int row = 0; row < list_market.size(); ++row) {
+                                        char label[32];
+                                        ImGui::TableNextRow();
+                                        ImGui::TableSetColumnIndex(0);
+                                        ImGui::Selectable(std::get<0>(list_market[row]).c_str(), &selected_item[row]);
+                                        ImGui::TableSetColumnIndex(1);
+                                        ImGui::Selectable(std::to_string(std::get<1>(list_market[row])).c_str(), &selected_item[row]);
+                                        ImGui::TableSetColumnIndex(2);
+                                        ImGui::Selectable(std::to_string(std::get<2>(list_market[row])).c_str(), &selected_item[row]);
+                                    }
 
-                                            ImGui::EndTable();
-                                        }
+                                    ImGui::EndTable();
+                                }
 
-                                    ImGui::EndChild();
+                                ImGui::EndChild();
+                                ImGui::EndGroup();
+
+                                ImGui::SameLine();
+
+                                ImGui::BeginGroup();
+                                Greedy_h* greedy = new Greedy_h();
+
+                                ImGui::BeginChild("dp", ImVec2(335, (list_market.size() * 30)), true);
+                                ImGui::Text("Dynamic Programing : ");
+                                if (ImGui::BeginTable("split1", 5, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+                                {
+                                    for (auto& it = list_market.begin(); it != list_market.end(); ++it) {
+                                        ImGui::TableNextColumn();
+                                        ImGui::Selectable(std::get<0>(*it).c_str(), &selected_item[std::get<3>(*it)]);
+                                    }
+
+
+                                    ImGui::EndTable();
+                                }
+                                ImGui::Spacing();
+
+                                ImGui::Text("Solusi Dynamic Programing :");
+
+                                std::vector<bool> solution = std::get<2>(greedy->get_profit_cost(list_market, nominal));
+                                std::reverse(solution.begin(), solution.end());
+                                for (int i = 0; i < 5; ++i)
+                                    selected_item[std::get<3>(list_market[i])] = solution[std::get<3>(list_market[i])];
+                                for (int i = 0; i < 5; ++i) {
+                                    ImGui::SameLine();
+                                    ImGui::Text("%d ", selected_item[std::get<3>(list_market[i])]);
+                                }
+
+                                ImGui::Text("\nTotal Profit : %d", std::get<0>(greedy->get_profit_cost(list_market, nominal)));
+                                ImGui::Text("\nTotal Cost : %d", std::get<1>(greedy->get_profit_cost(list_market, nominal)));
+                                ImGui::EndChild();
                                 ImGui::EndGroup();
 
                             }
@@ -396,15 +478,8 @@ int main(int, char**)
                         ImGui::Text("\nID: 0x%d", menu_sidebar[selected].second);
                     }
 
-
-
-
-
-
                     ImGui::EndTabBar();
                 }
-
-              
                 ImGui::EndChild();
                 if (ImGui::Button("Revert")) {}
                 ImGui::SameLine();
@@ -419,7 +494,7 @@ int main(int, char**)
         g_pd3dDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
         g_pd3dDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
         g_pd3dDevice->SetRenderState(D3DRS_SCISSORTESTENABLE, FALSE);
-        D3DCOLOR clear_col_dx = D3DCOLOR_RGBA((int)(clear_color.x*clear_color.w*255.0f), (int)(clear_color.y*clear_color.w*255.0f), (int)(clear_color.z*clear_color.w*255.0f), (int)(clear_color.w*255.0f));
+        D3DCOLOR clear_col_dx = D3DCOLOR_RGBA((int)(clear_color.x * clear_color.w * 255.0f), (int)(clear_color.y * clear_color.w * 255.0f), (int)(clear_color.z * clear_color.w * 255.0f), (int)(clear_color.w * 255.0f));
         g_pd3dDevice->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, clear_col_dx, 1.0f, 0);
         if (g_pd3dDevice->BeginScene() >= 0)
         {
