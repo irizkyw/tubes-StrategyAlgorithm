@@ -1,15 +1,6 @@
-#include <iostream>
-#include <stdio.h>
-#include <vector>
-#include <string>
-#include <tuple>
-#include "imgui.h"
-#include "imgui_impl_dx9.h"
-#include "imgui_impl_win32.h"
-#include <d3d9.h>
-#include <tchar.h>
-
 #include "Greedy_h.h"
+
+
 // Data
 static LPDIRECT3D9              g_pD3D = nullptr;
 static LPDIRECT3DDEVICE9        g_pd3dDevice = nullptr;
@@ -68,6 +59,12 @@ void embraceTheDarkness()
 // Main code
 int main(int, char**)
 {
+    // declare
+    Data data;
+    Greedy_h greedy;
+    bool* solution = new bool[data.sort_market.size()];
+
+    //
     // Create application window
     //ImGui_ImplWin32_EnableDpiAwareness();
     WNDCLASSEXW wc = { sizeof(wc), CS_CLASSDC, WndProc, 0L, 0L, GetModuleHandle(nullptr), nullptr, nullptr, nullptr, nullptr, L"ImGui Example", nullptr };
@@ -103,10 +100,11 @@ int main(int, char**)
     ImGui_ImplDX9_Init(g_pd3dDevice);
 
     // Our state
-    bool show_demo_window = true;
+    bool show_demo_window = false;
     bool show_another_window = false;
     bool simple_layout = false;
     bool tree_contributor = true;
+    bool console = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     // Main loop
@@ -141,55 +139,44 @@ int main(int, char**)
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-        {
-            static float f = 0.0f;
-            static int counter = 0;
-
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-            ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-            ImGui::Checkbox("Another Window", &simple_layout);
-
-            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-            if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-                counter++;
-            ImGui::SameLine();
-            ImGui::Text("counter = %d", counter);
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            ImGui::End();
-        }
         std::vector<std::pair<std::string, int>> menu_sidebar = {
                    {"Introduction", 0},
                    {"Data",1},
                    {"Solution",2}
         };
-        std::vector<std::tuple<std::string, int, int, int >> list_market{
-            std::make_tuple("A", 500, 1500,0),
-            std::make_tuple("E", 320, 5000,4),
-            std::make_tuple("C", 650, 3000,2),
-            std::make_tuple("B", 1000, 2500,1),
-            std::make_tuple("D", 2500, 4000,3),
+        std::vector< std::tuple<std::string, int, int, int> > list_market{
+            std::make_tuple("A", 10, 0,0),
+            std::make_tuple("B", 10, 0,0),
+            std::make_tuple("C", 10, 0,0),
+            std::make_tuple("D", 10, 0,0),
+            std::make_tuple("E", 10, 0,0),
+            std::make_tuple("F", 10, 0,0),
+            std::make_tuple("G", 10, 0,0),
+            
         };
 
         // Show simple layout
-        static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
+        static ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoBringToFrontOnFocus;
         const ImGuiViewport* viewport = ImGui::GetMainViewport();
         static bool use_work_area = true;
         ImGui::SetNextWindowPos(use_work_area ? viewport->WorkPos : viewport->Pos);
         ImGui::SetNextWindowSize(use_work_area ? viewport->WorkSize : viewport->Size);
         //ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
 
-        if (ImGui::Begin("Strategy Algorithm", &simple_layout, /*window_flags*/ ImGuiWindowFlags_MenuBar))
+        if (ImGui::Begin("Strategy Algorithm", &simple_layout, window_flags))
         {
             if (ImGui::BeginMenuBar())
             {
                 if (ImGui::BeginMenu("Settings"))
                 {
+                    if (ImGui::MenuItem("Console", NULL, console)) {
+                        console = !console;
+                    }
+
+                    if (ImGui::MenuItem("Demo", NULL, show_demo_window)) {
+                        show_demo_window = !show_demo_window;
+                    }
+
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenuBar();
@@ -242,29 +229,56 @@ int main(int, char**)
                         enum ContentsType { CT_Text, CT_FillButton };
                         static int contents_type = CT_Text;
                         static ImGuiTableFlags flags_table = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-                        if (ImGui::BeginTabItem("Description")) {
-                            ImGui::Text("lorem ipsum ");
 
-                            if (ImGui::BeginTable("table1", 3, flags_table))
+                        if (ImGui::BeginTabItem("Description")) {
+                            ImGui::Text("Data yang digunakan adalah data saham yang diperoleh dari BEI (Bursa Efek Indonesia) yang berisi data saham yang diperdagangkan di BEI.");
+                            ImGui::Text("Data saham ini sudah diringkas dalam diperdagangkan pada tahun 2022 - 2023.\n");
+                            ImGui::Text("File:");
+                            ImGui::SameLine();;
+                            // call data
+                            ImGui::PushItemWidth(400);
+                            data.file_button = ImGui::Button((!data.file_button) ? "Select File" : data.file_name.c_str());
+                            ImGui::BeginChild("Data",ImVec2(0,0));
+                            if(data.allOK)
+                            if (ImGui::BeginTable("table1", 6, flags_table))
                             {
-                                ImGui::TableSetupColumn("Jenis Investasi");
-                                ImGui::TableSetupColumn("Cost");
-                                ImGui::TableSetupColumn("Profit");
+
+                                ImGui::TableSetupColumn(data.column[0][0].KodeSaham.c_str(), ImGuiTableColumnFlags_WidthFixed,100.0f);
+                                ImGui::TableSetupColumn(data.column[0][0].OpenPrice.c_str());
+                                ImGui::TableSetupColumn(data.column[0][0].Penutupan.c_str());
+                                ImGui::TableSetupColumn(data.column[0][0].Selisih.c_str());
+                                ImGui::TableSetupColumn(data.column[0][0].Volume.c_str());
+                                ImGui::TableSetupColumn(data.column[0][0].Frekuensi.c_str());
+
+
                                 ImGui::TableHeadersRow();
 
-                                for (int row = 0; row < list_market.size(); row++)
-                                {
-                                    ImGui::TableNextRow();
-                                    ImGui::TableSetColumnIndex(0);
-                                    ImGui::Text("%s", (std::get<0>(list_market[row]) == "") ? "NONE" : std::get<0>(list_market[row]).c_str());
-                                    ImGui::TableSetColumnIndex(1);
-                                    ImGui::Text("%d", (std::get<1>(list_market[row]) == NULL) ? 0 : std::get<1>(list_market[row]));
 
-                                    ImGui::TableSetColumnIndex(2);
-                                    ImGui::Text("%d", (std::get<1>(list_market[row]) == NULL) ? 0 : std::get<2>(list_market[row]));
+                                for (int row = 0; row < data.data.size(); row++)
+                                {
+                                    if (data.data[row][0].OpenPrice == "0") continue;
+                                    ImGui::TableNextRow();
+                                    for (int column = 0; column < data.data[row].size(); column++)
+                                    {
+                                        if (data.data[row][column].OpenPrice == "0") continue;
+                                            ImGui::TableSetColumnIndex(column);
+                                            ImGui::Text("%s", data.data[row][column].KodeSaham.c_str());
+                                            ImGui::TableSetColumnIndex(column + 1);
+                                            ImGui::Text("%s", data.data[row][column].OpenPrice.c_str());
+                                            ImGui::TableSetColumnIndex(column + 2);
+                                            ImGui::Text("%s", data.data[row][column].Penutupan.c_str());
+                                            ImGui::TableSetColumnIndex(column + 3);
+                                            ImGui::Text("%s", data.data[row][column].Selisih.c_str());
+                                            ImGui::TableSetColumnIndex(column + 4);
+                                            ImGui::Text("%s", data.data[row][column].Volume.c_str());
+                                            ImGui::TableSetColumnIndex(column + 5);
+                                            ImGui::Text("%s", data.data[row][column].Frekuensi.c_str());
+                                    }
                                 }
                                 ImGui::EndTable();
                             }
+                            data.checkBtn(hwnd);
+                            ImGui::EndChild();
                             ImGui::EndTabItem();
                         }
                         ImGui::Text("\nID: 0x%d", menu_sidebar[selected].second);
@@ -275,16 +289,29 @@ int main(int, char**)
                         enum ContentsType { CT_Text, CT_FillButton };
                         static int contents_type = CT_Text;
                         static int nominal = 0;
+                        static int value = 0;
                         static bool btn_state = false;
 
                         if (ImGui::BeginTabItem("Calculate")) {
                             size_t tuple_size = std::tuple_size<decltype(list_market)::value_type>::value;
                             // Input value
                             {
-                                ImGui::BeginChild("data", ImVec2(0, 70), true);
+                                ImGui::BeginChild("data", ImVec2(0, 150), true);
                                 ImGui::Text("Masukan Uang yang dimiliki : ");
-                                ImGui::InputInt("##input", &nominal);
-                                if (nominal < 0) nominal = 0;
+                                ImGui::InputInt("##input", &data.nominal);
+                                //ImGui::Text("Jumlah saham yang akan dibeli: ");
+                                //ImGui::InputInt("##saham", &nominal);
+                                if (data.nominal < 0) data.nominal = 0;
+
+                                ImGui::Text("Masukan jumlah Lot yang dibeli : ");
+                                ImGui::InputInt("##input_lot", &data.qty_lot);
+                                if (data.qty_lot < 0) data.qty_lot = 0;
+
+                                if (ImGui::Button("Calculate")) {
+                                    data.calculate(data.data, data.nominal, data.qty_lot);
+                                    data.sort_market = greedy.sort_market(data.data);
+                                    data.solution = greedy.Solution_Greedy(data.sort_market, data.nominal);
+                                }
                                 ImGui::EndChild();
                             }
 
@@ -294,28 +321,48 @@ int main(int, char**)
                                 ImGui::BeginChild("list_market", ImVec2(1400, list_market.size() * 30), true);
                                 ImGui::Text("List Market saat ini:");
                                 static ImGuiTableFlags flags_table = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-                                if (ImGui::BeginTable("table1", 3, flags_table)) {
-                                    ImGui::TableSetupColumn("Jenis Investasi");
-                                    ImGui::TableSetupColumn("Cost");
-                                    ImGui::TableSetupColumn("Profit");
+                                if (data.allOK) {
+                                    if (ImGui::BeginTable("table1", 6, flags_table))
+                                    {
 
-                                    ImGui::TableHeadersRow();
-
-                                    for (int row = 0; row < list_market.size(); ++row) {
-                                        ImGui::TableNextRow();
-                                        ImGui::TableSetColumnIndex(0);
-                                        ImGui::Text("%s", (std::get<0>(list_market[row]) == "NULL") ? 0 : std::get<0>(list_market[row]).c_str());
-
-                                        ImGui::TableSetColumnIndex(1);
-                                        ImGui::Text("%d", (std::get<1>(list_market[row]) == NULL) ? 0 : std::get<1>(list_market[row]));
-
-                                        ImGui::TableSetColumnIndex(2);
-                                        ImGui::Text("%d", (std::get<2>(list_market[row]) == NULL) ? 0 : std::get<2>(list_market[row]));
+                                        ImGui::TableSetupColumn(data.column[0][0].KodeSaham.c_str());
+                                        ImGui::TableSetupColumn(data.column[0][0].OpenPrice.c_str());
+                                        ImGui::TableSetupColumn(data.column[0][0].Penutupan.c_str());
+                                        ImGui::TableSetupColumn(data.column[0][0].Selisih.c_str());
+                                        ImGui::TableSetupColumn(data.column[0][0].Volume.c_str());
+                                        ImGui::TableSetupColumn(data.column[0][0].Frekuensi.c_str());
 
 
+                                        ImGui::TableHeadersRow();
+
+
+                                        for (int row = 0; row < data.data.size(); row++)
+                                        {
+                                            if (data.data[row][0].OpenPrice == "0") continue;
+                                            ImGui::TableNextRow();
+                                            for (int column = 0; column < data.data[row].size(); column++)
+                                            {
+                                                if (data.data[row][column].OpenPrice == "0") continue;
+                                                ImGui::TableSetColumnIndex(column);
+                                                ImGui::Text("%s", data.data[row][column].KodeSaham.c_str());
+                                                ImGui::TableSetColumnIndex(column + 1);
+                                                ImGui::Text("%s", data.formatCurrencyString(data.data[row][0].OpenPrice).c_str());
+                                                ImGui::TableSetColumnIndex(column + 2);
+                                                ImGui::Text("%s", data.formatCurrencyString(data.data[row][0].Penutupan).c_str());
+                                                ImGui::TableSetColumnIndex(column + 3);
+                                                ImGui::Text("%s", data.formatCurrencyString(data.data[row][0].Selisih).c_str());
+                                                ImGui::TableSetColumnIndex(column + 4);
+                                                ImGui::Text("%s", data.formatCurrencyString(data.data[row][0].Volume).c_str());
+                                                ImGui::TableSetColumnIndex(column + 5);
+                                                ImGui::Text("%s", data.formatCurrencyString(data.data[row][0].Frekuensi).c_str());
+                                            }
+                                        }
+                                        ImGui::EndTable();
                                     }
-                                    ImGui::EndTable();
                                 }
+                                else ImGui::Text("Data not found");
+
+
                                 ImGui::EndChild();
                             }
 
@@ -325,33 +372,37 @@ int main(int, char**)
                                 ImGui::BeginChild("list_greedy", ImVec2(1400, list_market.size() * 30), true);
                                 ImGui::Text("Greedy:");
                                 static ImGuiTableFlags flags_table = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-                                if (ImGui::BeginTable("tb_greedy", 4, flags_table, ImVec2(1400, 0))) {
-                                    ImGui::TableSetupColumn("Jenis Investasi", 0.10f);
-                                    ImGui::TableSetupColumn("Cost");
-                                    ImGui::TableSetupColumn("Profit");
-                                    ImGui::TableSetupColumn("Ratio profit(Profit / Cost)");
+                                if(data.allOK){
+                                    
+                                if (ImGui::BeginTable("tb_greedy", 6, flags_table, ImVec2(1400, 0))) {
+                                    ImGui::TableSetupColumn(data.column[0][0].KodeSaham.c_str(), ImGuiTableColumnFlags_WidthFixed);
+                                    ImGui::TableSetupColumn(data.column[0][0].OpenPrice.c_str(), ImGuiTableColumnFlags_WidthFixed);
+                                    ImGui::TableSetupColumn(data.column[0][0].Penutupan.c_str(), ImGuiTableColumnFlags_WidthFixed);
+                                    ImGui::TableSetupColumn("Total lot", ImGuiTableColumnFlags_WidthFixed);
+                                    ImGui::TableSetupColumn("Total Cost", ImGuiTableColumnFlags_WidthFixed);
+                                    ImGui::TableSetupColumn("Est. Profit", ImGuiTableColumnFlags_WidthFixed);
 
                                     ImGui::TableHeadersRow();
 
-                                    Greedy_h* greedy = new Greedy_h();
-                                    std::vector<std::tuple<std::string, int, int, int >> market_sorted = greedy->sort_market(list_market);
-
-                                    for (int row = 0; row < market_sorted.size(); ++row) {
+                                    for (int row = 0; row < data.sort_market.size(); ++row) {
+                                        if (data.sort_market[row][0].OpenPrice == "0") continue;
                                         ImGui::TableNextRow();
                                         ImGui::TableSetColumnIndex(0);
-                                        ImGui::Selectable(std::get<0>(market_sorted[row]).c_str(), &selected_item[std::get<3>(market_sorted[row])]);
-
+                                        ImGui::Selectable(data.sort_market[row][0].KodeSaham.c_str(), data.solution[row], ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap);
                                         ImGui::TableSetColumnIndex(1);
-                                        ImGui::Text("%d", (std::get<1>(market_sorted[row]) == NULL) ? 0 : std::get<1>(market_sorted[row]));
-
+                                        ImGui::Text("%s", data.formatCurrencyString(data.sort_market[row][0].OpenPrice).c_str());
                                         ImGui::TableSetColumnIndex(2);
-                                        ImGui::Text("%d", (std::get<2>(market_sorted[row]) == NULL) ? 0 : std::get<2>(market_sorted[row]));
-
+                                        ImGui::Text("%s", data.formatCurrencyString(data.sort_market[row][0].Penutupan).c_str());
                                         ImGui::TableSetColumnIndex(3);
-                                        ImGui::Text("x%.1f", (float)std::get<2>(market_sorted[row]) / std::get<1>(market_sorted[row]));
+                                        ImGui::Text("%s", data.formatCurrencyInt(data.sort_market[row][0].total_lot).c_str());
+                                        ImGui::TableSetColumnIndex(4);
+                                        ImGui::Text("%s", data.formatCurrencyInt(data.sort_market[row][0].total_cost).c_str());
+                                        ImGui::TableSetColumnIndex(5);
+                                        ImGui::Text("%s", data.formatCurrencyInt(data.sort_market[row][0].total_shares_profit).c_str());
                                     }
 
                                     ImGui::EndTable();
+                                }
                                 }
                                 ImGui::EndChild();
                                 ImGui::EndGroup();
@@ -360,49 +411,35 @@ int main(int, char**)
 
                                 // Summary Greedy
                                 ImGui::BeginGroup();
-                                Greedy_h* greedy = new Greedy_h();
 
                                 ImGui::BeginChild("greedy", ImVec2(335, (list_market.size() * 30) * 2), true);
                                 ImGui::Text("Greedy : ");
-                                if (ImGui::BeginTable("split1", 5, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+                                
+                                if (ImGui::BeginTable("split_greedy", 5, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
                                 {
-                                    for (auto& it = list_market.begin(); it != list_market.end(); ++it) {
-                                        ImGui::TableNextColumn();
-                                        ImGui::Selectable(std::get<0>(*it).c_str(), &selected_item[std::get<3>(*it)]);
+                                    for (int i = 0; i < data.sort_market.size(); ++i) {
+                                        for (int j = 0; j < data.sort_market[i].size(); ++j) {
+                                            if (data.sort_market[i][j].OpenPrice == "0") continue;
+                                                ImGui::TableNextColumn();
+                                                ImGui::Selectable(data.sort_market[i][j].KodeSaham.c_str(), data.solution[i]);
+                                        }
                                     }
-
-
                                     ImGui::EndTable();
                                 }
+
                                 ImGui::Spacing();
 
-                                ImGui::Text("Solusi Greedy :");
-
-                                std::vector<bool> solution = std::get<2>(greedy->get_profit_cost(list_market, nominal));
-                                std::reverse(solution.begin(), solution.end());
-                                for (int i = 0; i < 5; ++i)
-                                    selected_item[std::get<3>(list_market[i])] = solution[std::get<3>(list_market[i])];
-                                for (int i = 0; i < 5; ++i) {
-                                    ImGui::SameLine();
-                                    ImGui::Text("%d ", selected_item[std::get<3>(list_market[i])]);
-                                }
-
-                                for (auto& it = list_market.begin(); it != list_market.end(); ++it) {
-                                    if (selected_item[std::get<3>(*it)])
-                                        ImGui::BulletText(std::get<0>(*it).c_str(), &selected_item[std::get<3>(*it)]);
-                                }
-
-                                ImGui::Text("\nTotal Profit : %d", std::get<0>(greedy->get_profit_cost(list_market, nominal)));
-                                ImGui::Text("\nTotal Cost : %d", std::get<1>(greedy->get_profit_cost(list_market, nominal)));
-                                ImGui::Text("\nSisa Uang : %d", nominal - std::get<1>(greedy->get_profit_cost(list_market, nominal)));
+                                ImGui::Text("\nEstimasi total Profit : %s", data.formatCurrencyInt(greedy.profit).c_str());
+                                ImGui::Text("\nTotal Cost : %s", data.formatCurrencyInt(greedy.cost).c_str());
+                                ImGui::Text("\nSisa Uang : %s", data.formatCurrencyInt(data.nominal - greedy.cost).c_str());
                                 ImGui::EndChild();
                                 ImGui::EndGroup();
                             }
 
                             // Dynamic Solution
+                            /*
                             {
                                 ImGui::BeginGroup();
-                                static bool selected_item[10] = {};
                                 static ImGuiTableFlags flags_table = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
                                 ImGui::BeginChild("d_programing", ImVec2(1400, list_market.size() * 30), true);
                                 ImGui::Text("Dynamic Programming:");
@@ -420,11 +457,11 @@ int main(int, char**)
                                         char label[32];
                                         ImGui::TableNextRow();
                                         ImGui::TableSetColumnIndex(0);
-                                        ImGui::Selectable(std::get<0>(list_market[row]).c_str(), &selected_item[row]);
+                                        ImGui::Selectable(std::get<0>(list_market[row]).c_str(), &data.solution[row]);
                                         ImGui::TableSetColumnIndex(1);
-                                        ImGui::Selectable(std::to_string(std::get<1>(list_market[row])).c_str(), &selected_item[row]);
+                                        ImGui::Selectable(std::to_string(std::get<1>(list_market[row])).c_str(), &data.solution[row]);
                                         ImGui::TableSetColumnIndex(2);
-                                        ImGui::Selectable(std::to_string(std::get<2>(list_market[row])).c_str(), &selected_item[row]);
+                                        ImGui::Selectable(std::to_string(std::get<2>(list_market[row])).c_str(), &data.solution[row]);
                                     }
 
                                     ImGui::EndTable();
@@ -444,7 +481,7 @@ int main(int, char**)
                                 {
                                     for (auto& it = list_market.begin(); it != list_market.end(); ++it) {
                                         ImGui::TableNextColumn();
-                                        ImGui::Selectable(std::get<0>(*it).c_str(), &selected_item[std::get<3>(*it)]);
+                                        ImGui::Selectable(std::get<0>(*it).c_str(), &data.solution[std::get<3>(*it)]);
                                     }
 
 
@@ -454,40 +491,39 @@ int main(int, char**)
 
                                 ImGui::Text("Solusi Dynamic Programing :");
 
-                                std::vector<bool> solution = std::get<2>(greedy->get_profit_cost(list_market, nominal));
-                                std::reverse(solution.begin(), solution.end());
+                                //std::vector<bool> solution = std::get<2>(greedy->get_profit_cost(list_market, nominal));
+                                //std::reverse(solution.begin(), solution.end());
                                 for (int i = 0; i < 5; ++i)
-                                    selected_item[std::get<3>(list_market[i])] = solution[std::get<3>(list_market[i])];
+                                    //selected_item[std::get<3>(list_market[i])] = solution[std::get<3>(list_market[i])];
                                 for (int i = 0; i < 5; ++i) {
                                     ImGui::SameLine();
-                                    ImGui::Text("%d ", selected_item[std::get<3>(list_market[i])]);
+                                    ImGui::Text("%d ", data.solution[std::get<3>(list_market[i])]);
                                 }
 
-                                ImGui::Text("\nTotal Profit : %d", std::get<0>(greedy->get_profit_cost(list_market, nominal)));
-                                ImGui::Text("\nTotal Cost : %d", std::get<1>(greedy->get_profit_cost(list_market, nominal)));
+                                //ImGui::Text("\nTotal Profit : %d", std::get<0>(greedy->get_profit_cost(list_market, nominal)));
+                                //ImGui::Text("\nTotal Cost : %d", std::get<1>(greedy->get_profit_cost(list_market, nominal)));
                                 ImGui::EndChild();
                                 ImGui::EndGroup();
 
                             }
+                            */
                             ImGui::EndTabItem();
                         }
-                        if (ImGui::BeginTabItem("Logs")) {
-                            ImGui::Text("lorem ipsum ");
-                            ImGui::EndTabItem();
-                        }
+                        
                         ImGui::Text("\nID: 0x%d", menu_sidebar[selected].second);
                     }
 
                     ImGui::EndTabBar();
                 }
+                if(console)
+                    data.logs.Draw("Console", &console);
                 ImGui::EndChild();
-                if (ImGui::Button("Revert")) {}
-                ImGui::SameLine();
-                if (ImGui::Button("Save")) {}
                 ImGui::EndGroup();
             }
         }
+
         ImGui::End();
+        
 
         // Rendering
         ImGui::EndFrame();

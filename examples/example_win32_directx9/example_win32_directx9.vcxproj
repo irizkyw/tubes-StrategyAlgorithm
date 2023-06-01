@@ -153,6 +153,7 @@
     <ClCompile Include="..\..\imgui.cpp" />
     <ClCompile Include="..\..\imgui_demo.cpp" />
     <ClCompile Include="..\..\imgui_draw.cpp" />
+    <ClCompile Include="..\..\imgui_stdlib.cpp" />
     <ClCompile Include="..\..\imgui_tables.cpp" />
     <ClCompile Include="..\..\imgui_widgets.cpp" />
     <ClCompile Include="..\..\backends\imgui_impl_dx9.cpp" />
@@ -166,6 +167,8 @@
     <ClInclude Include="..\..\imgui_internal.h" />
     <ClInclude Include="..\..\backends\imgui_impl_dx9.h" />
     <ClInclude Include="..\..\backends\imgui_impl_win32.h" />
+    <ClInclude Include="..\..\imgui_stdlib.h" />
+    <ClInclude Include="data.h" />
     <ClInclude Include="Greedy_h.h" />
   </ItemGroup>
   <ItemGroup>

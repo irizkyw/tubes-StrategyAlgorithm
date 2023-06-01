@@ -11,6 +11,9 @@
     <Filter Include="greedy">
       <UniqueIdentifier>{3ec614f7-9ea1-48e9-8a68-6c1c707df9b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="general">
+      <UniqueIdentifier>{77d28f1d-f09c-49eb-afbd-7e8f963e6739}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -40,6 +43,9 @@
     <ClCompile Include="Greedy.cpp">
       <Filter>greedy</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\imgui_stdlib.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\imconfig.h">
@@ -59,6 +65,12 @@
     </ClInclude>
     <ClInclude Include="Greedy_h.h">
       <Filter>greedy</Filter>
+    </ClInclude>
+    <ClInclude Include="data.h">
+      <Filter>general</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\imgui_stdlib.h">
+      <Filter>imgui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
