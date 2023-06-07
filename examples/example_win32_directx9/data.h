@@ -142,41 +142,8 @@ struct AppLogs
     }
 };
 
-
-
-
-    /// <summary>
-    // Securities Code|Securities Name       |Scurities Type|Issuer                    |Registrar              |Isin Code   |ISIN Status|Listing Date|Number of Sec.|Stock Exchange|Status   |Nominal|Currency|Form      |Eff. Isin Date|Sec. sector
-    // AALI           |ASTRA AGRO LESTARI Tbk|EQUITY        |ASTRA AGRO LESTARI Tbk, PT|RAYA SAHAM REGISTRA, PT|ID1000066004|Active     |09-DEC-1997 |1924688333    |IDX           |AVAILABLE|500    |IDR     |Electronic|04-APR-2001   |PLANTATION
-    /// </summary>
-/*
 struct values {
-    std::string SecuritiesCode;
-    std::string SecuritiesName;
-    std::string SecuritiesType;
-    std::string Issuer;
-    std::string Registrar;
-    std::string IsinCode;
-    std::string IsinStatus;
-    std::string ListingDate;
-    std::string NumberOfSecurities;
-    std::string StockExchange;
-    std::string Status;
-    std::string Nominal;
-    std::string Currency;
-    std::string Form;
-    std::string EffectiveIsinDate;
-    std::string SecuritiesSector;
-    int key;
-};
-*/
-
-/// <summary>
-/// No|Kode Saham|Nama Perusahaan|Remarks|Sebelumnya|Open Price|Tanggal Perdagangan Terakhir|First Trade|Tertinggi|Terendah|Penutupan|Selisih|Volume|Nilai|Frekuensi|Index Individual|Offer|Offer Volume|Bid|Bid Volume|Listed Shares|Tradeble Shares|Weight For Index|Foreign Sell|Foreign Buy|Non Regular Volume|Non Regular Value|Non Regular Frequency
-/// 1 | AALI | Astra Agro Lestari Tbk. | --S - 18AEM16000D232------------ | 7400 | 0 | 23 Mei 2023 | 0 | 7550 | 7400 | 7500 | 100 | 666700 | 4993422500 | 621 | 609.3 | 7525 | 9100 | 7500 | 262800 | 1924688333 | 1924688333 | 390711732 | 168700 | 113600 | 88 | 653400 | 1
-/// </summary>
-struct values {
-    int no;
+    int no = 0;
     std::string KodeSaham;
     std::string NamaPerusahaan;
     std::string Remarks;
@@ -205,9 +172,10 @@ struct values {
     std::string NonRegularValue;
     std::string NonRegularFrequency;
 
-    int total_lot; // (uang / open price)
-    int total_cost; // (open price x lot)
-    int total_shares_profit; // (harga penutupan - harga pembukaan) x jumlah saham
+    int total_lot = 0; // (uang / open price)
+    int total_cost = 0; // (open price x lot)
+    int total_shares_profit = 0; // (harga penutupan - harga pembukaan) x jumlah saham
+    int take = 0;
 };
 
 class Data
@@ -216,13 +184,19 @@ public:
     bool file_button = false;
     bool allOK = false;
     bool solution_button = false;
-    int nominal = 0;
-    int qty_lot = 0;
+    int nominal = 100000;
+    int qty_lot = 1;
+    // dp
+    int cost_dp = 0;
+    int profit_dp = 0;
+    std::vector<bool> solution_dp;
+    std::vector<values> data_dp;
+
     std::vector<bool> solution;
     std::string file_path,file_name;
-    std::vector<std::vector<values>> data;
-    std::vector<std::vector<values>> sort_market;
-    std::vector<std::vector<values>> column;
+    std::vector<values> data;
+    std::vector<values> sort_market;
+    std::vector<values> column;
     AppLogs logs;
 
     void openFile(HWND hWnd, std::string &file_path, std::string &file_name) {
@@ -328,61 +302,29 @@ public:
                     std::getline(ss, item, '|');
                     value.NonRegularFrequency = item;
 
-                    row.push_back(value);
+                    data.push_back(value);
                 }
                 key++;
-                data.push_back(row);
             }
             file.close();
         }
-        // print to logs
-        for (int i = 0; i < data.size(); i++) {
-            logs.AddLog("Row : %d\n", i);
-            for (int j = 0; j < data[i].size(); j++) {
-                logs.AddLog("Key : %d\n", data[i][j].no);
-                logs.AddLog("KodeSaham : %s\n", data[i][j].KodeSaham.c_str());
-                logs.AddLog("NamaPerusahaan : %s\n", data[i][j].NamaPerusahaan.c_str());
-                logs.AddLog("Remarks : %s\n", data[i][j].Remarks.c_str());
-                logs.AddLog("Sebelumnya : %s\n", data[i][j].Sebelumnya.c_str());
-                logs.AddLog("OpenPrice : %s\n", data[i][j].OpenPrice.c_str());
-                logs.AddLog("TanggalPerdaganganTerakhir : %s\n", data[i][j].TanggalPerdaganganTerakhir.c_str());
-                logs.AddLog("FirstTrade : %s\n", data[i][j].FirstTrade.c_str());
-                logs.AddLog("Tertinggi : %s\n", data[i][j].Tertinggi.c_str());
-                logs.AddLog("Terendah : %s\n", data[i][j].Terendah.c_str());
-                logs.AddLog("Penutupan : %s\n", data[i][j].Penutupan.c_str());
-                logs.AddLog("Selisih : %s\n", data[i][j].Selisih.c_str());
-                logs.AddLog("Volume : %s\n", data[i][j].Volume.c_str());
-                logs.AddLog("Nilai : %s\n", data[i][j].Nilai.c_str());
-                logs.AddLog("Frekuensi : %s\n", data[i][j].Frekuensi.c_str());
-                logs.AddLog("IndexIndividual : %s\n", data[i][j].IndexIndividual.c_str());
-                logs.AddLog("Offer : %s\n", data[i][j].Offer.c_str());
-                logs.AddLog("OfferVolume : %s\n", data[i][j].OfferVolume.c_str());
-                logs.AddLog("Bid : %s\n", data[i][j].Bid.c_str());
-                logs.AddLog("BidVolume : %s\n", data[i][j].BidVolume.c_str());
-                logs.AddLog("ListedShares : %s\n", data[i][j].ListedShares.c_str());
-                logs.AddLog("TradebleShares : %s\n", data[i][j].TradebleShares.c_str());
-                logs.AddLog("WeightForIndex : %s\n", data[i][j].WeightForIndex.c_str());
-                logs.AddLog("ForeignSell : %s\n", data[i][j].ForeignSell.c_str());
-                logs.AddLog("ForeignBuy : %s\n", data[i][j].ForeignBuy.c_str());
-                logs.AddLog("NonRegularVolume : %s\n", data[i][j].NonRegularVolume.c_str());
-                logs.AddLog("NonRegularValue : %s\n", data[i][j].NonRegularValue.c_str());
-                logs.AddLog("NonRegularFrequency : %s\n\n", data[i][j].NonRegularFrequency.c_str());
-            }
-        }
-
-        for (int i = 0; i < data[0].size(); i++) {
-            std::vector<values> row;
-            for (int j = 0; j < data.size(); j++) {
-                row.push_back(data[j][i]);
-            }
-            column.push_back(row);
-        }
+        
+        column.push_back(data[0]);
         data.erase(data.begin());
 
         logs.AddLog("[INFO] Load Data Success\n");
+    }
 
-
-       
+    void dropRowsWithZeroOpenPrice(std::vector<values>& list_market) {
+        auto it = list_market.begin();
+        while (it != list_market.end()) {
+            if (it->OpenPrice == "0") {
+                it = list_market.erase(it);
+            }
+            else {
+                ++it;
+            }
+        }
     }
 
     bool checkBtn(HWND hWnd) {
@@ -395,12 +337,13 @@ public:
             logs.AddLog("[INFO] Clear Data Success!!\n");
             openFile(hWnd,file_path, file_name);
             readFile(file_path);
+            dropRowsWithZeroOpenPrice(this->data);
             logs.AddLog("[INFO] Load Data Success!!\n");
         }
 
         if (this->data.size() > 0) {
             this->allOK = true;
-            calculate(this->data, this->nominal,this->qty_lot);
+            ///calculate(this->data, this->nominal,this->qty_lot);
             return true;
         }
         else
@@ -408,23 +351,20 @@ public:
     }
 
     
-
-    void calculate(std::vector<std::vector<values>>& data, int nominal,int lot) {
+    void calculate(std::vector<values>& data, int nominal,int lot) {
         for (int i = 0; i < data.size(); i++) {
-            for (int j = 0; j < data[i].size(); j++) {
-                if (data[i][j].OpenPrice == "0") {
-                    data[i][j].total_lot = 0;
-                    continue;
-                }
-
-                if(lot != 0)
-                    data[i][j].total_lot = lot;
-                else
-                    data[i][j].total_lot = (int)(nominal / std::stoi(data[i][j].OpenPrice));
-
-                data[i][j].total_cost = (int)(std::stoi(data[i][j].OpenPrice) * data[i][j].total_lot);
-                data[i][j].total_shares_profit = (int)(data[i][j].total_lot * (std::stoi(data[i][j].Penutupan) - std::stoi(data[i][j].OpenPrice)));
+            if (data[i].OpenPrice == "0") {
+                data[i].total_lot = 0;
+                continue;
             }
+
+            if (lot != 0)
+                data[i].total_lot = lot;
+            else
+                data[i].total_lot = (int)(nominal / std::stoi(data[i].OpenPrice));
+
+            data[i].total_cost = (int)(std::stoi(data[i].OpenPrice) * data[i].total_lot);
+            data[i].total_shares_profit = (int)(data[i].total_lot * (std::stoi(data[i].Penutupan) - std::stoi(data[i].OpenPrice)));
         }
     }
 
@@ -445,5 +385,29 @@ public:
         }
 
         return numberString;
+    }
+
+    std::vector<values> sortByCost(std::vector<values> list_market) {
+        std::sort(list_market.begin(), list_market.end(), [](const values& a, const values& b) {
+            return a.total_cost > b.total_cost;
+            });
+        return list_market;
+    }
+    int findMaxProfit(std::vector<values>& data, int total_money) {
+        std::vector<int> dp(total_money + 1, 0);
+        int cost = 0;
+        
+        for (int i = 1; i <= total_money; i++) {
+            for (int j = 0; j < data.size(); j++) {
+                if (data[j].total_cost <= i && data[j].total_shares_profit > 0) {
+                    dp[i] = max(dp[i], dp[i - data[j].total_cost] + data[j].total_shares_profit);
+                    data[j].take += 1;
+                    cost += data[j].total_cost;
+                }
+            }
+        }
+        this->cost_dp = cost;
+
+        return dp[total_money];
     }
 };

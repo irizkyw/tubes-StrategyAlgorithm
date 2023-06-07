@@ -243,12 +243,12 @@ int main(int, char**)
                             if (ImGui::BeginTable("table1", 6, flags_table))
                             {
 
-                                ImGui::TableSetupColumn(data.column[0][0].KodeSaham.c_str(), ImGuiTableColumnFlags_WidthFixed,100.0f);
-                                ImGui::TableSetupColumn(data.column[0][0].OpenPrice.c_str());
-                                ImGui::TableSetupColumn(data.column[0][0].Penutupan.c_str());
-                                ImGui::TableSetupColumn(data.column[0][0].Selisih.c_str());
-                                ImGui::TableSetupColumn(data.column[0][0].Volume.c_str());
-                                ImGui::TableSetupColumn(data.column[0][0].Frekuensi.c_str());
+                                ImGui::TableSetupColumn(data.column[0].KodeSaham.c_str() ,100.0f);
+                                ImGui::TableSetupColumn(data.column[0].OpenPrice.c_str());
+                                ImGui::TableSetupColumn(data.column[0].Penutupan.c_str());
+                                ImGui::TableSetupColumn(data.column[0].Selisih.c_str());
+                                ImGui::TableSetupColumn(data.column[0].Volume.c_str());
+                                ImGui::TableSetupColumn(data.column[0].Frekuensi.c_str());
 
 
                                 ImGui::TableHeadersRow();
@@ -256,24 +256,20 @@ int main(int, char**)
 
                                 for (int row = 0; row < data.data.size(); row++)
                                 {
-                                    if (data.data[row][0].OpenPrice == "0") continue;
+                                    if (data.data[row].OpenPrice == "0") continue;
                                     ImGui::TableNextRow();
-                                    for (int column = 0; column < data.data[row].size(); column++)
-                                    {
-                                        if (data.data[row][column].OpenPrice == "0") continue;
-                                            ImGui::TableSetColumnIndex(column);
-                                            ImGui::Text("%s", data.data[row][column].KodeSaham.c_str());
-                                            ImGui::TableSetColumnIndex(column + 1);
-                                            ImGui::Text("%s", data.data[row][column].OpenPrice.c_str());
-                                            ImGui::TableSetColumnIndex(column + 2);
-                                            ImGui::Text("%s", data.data[row][column].Penutupan.c_str());
-                                            ImGui::TableSetColumnIndex(column + 3);
-                                            ImGui::Text("%s", data.data[row][column].Selisih.c_str());
-                                            ImGui::TableSetColumnIndex(column + 4);
-                                            ImGui::Text("%s", data.data[row][column].Volume.c_str());
-                                            ImGui::TableSetColumnIndex(column + 5);
-                                            ImGui::Text("%s", data.data[row][column].Frekuensi.c_str());
-                                    }
+                                    ImGui::TableSetColumnIndex(0);
+                                    ImGui::Text("%s", data.data[row].KodeSaham.c_str());
+                                    ImGui::TableSetColumnIndex(1);
+                                    ImGui::Text("%s", data.data[row].OpenPrice.c_str());
+                                    ImGui::TableSetColumnIndex(2);
+                                    ImGui::Text("%s", data.data[row].Penutupan.c_str());
+                                    ImGui::TableSetColumnIndex(3);
+                                    ImGui::Text("%s", data.data[row].Selisih.c_str());
+                                    ImGui::TableSetColumnIndex(4);
+                                    ImGui::Text("%s", data.data[row].Volume.c_str());
+                                    ImGui::TableSetColumnIndex(5);
+                                    ImGui::Text("%s", data.data[row].Frekuensi.c_str());
                                 }
                                 ImGui::EndTable();
                             }
@@ -308,9 +304,15 @@ int main(int, char**)
                                 if (data.qty_lot < 0) data.qty_lot = 0;
 
                                 if (ImGui::Button("Calculate")) {
+                                    for (int i = 0; i < data.data.size(); ++i)
+                                        data.data[i].take = 0;
+
                                     data.calculate(data.data, data.nominal, data.qty_lot);
                                     data.sort_market = greedy.sort_market(data.data);
                                     data.solution = greedy.Solution_Greedy(data.sort_market, data.nominal);
+                                    data.data_dp = data.sortByCost(data.data);
+                                    data.profit_dp = data.findMaxProfit(data.data_dp,data.nominal);
+                                    
                                 }
                                 ImGui::EndChild();
                             }
@@ -325,12 +327,12 @@ int main(int, char**)
                                     if (ImGui::BeginTable("table1", 6, flags_table))
                                     {
 
-                                        ImGui::TableSetupColumn(data.column[0][0].KodeSaham.c_str());
-                                        ImGui::TableSetupColumn(data.column[0][0].OpenPrice.c_str());
-                                        ImGui::TableSetupColumn(data.column[0][0].Penutupan.c_str());
-                                        ImGui::TableSetupColumn(data.column[0][0].Selisih.c_str());
-                                        ImGui::TableSetupColumn(data.column[0][0].Volume.c_str());
-                                        ImGui::TableSetupColumn(data.column[0][0].Frekuensi.c_str());
+                                        ImGui::TableSetupColumn(data.column[0].KodeSaham.c_str());
+                                        ImGui::TableSetupColumn(data.column[0].OpenPrice.c_str());
+                                        ImGui::TableSetupColumn(data.column[0].Penutupan.c_str());
+                                        ImGui::TableSetupColumn(data.column[0].Selisih.c_str());
+                                        ImGui::TableSetupColumn(data.column[0].Volume.c_str());
+                                        ImGui::TableSetupColumn(data.column[0].Frekuensi.c_str());
 
 
                                         ImGui::TableHeadersRow();
@@ -338,24 +340,20 @@ int main(int, char**)
 
                                         for (int row = 0; row < data.data.size(); row++)
                                         {
-                                            if (data.data[row][0].OpenPrice == "0") continue;
+                                            if (data.data[row].OpenPrice == "0") continue;
                                             ImGui::TableNextRow();
-                                            for (int column = 0; column < data.data[row].size(); column++)
-                                            {
-                                                if (data.data[row][column].OpenPrice == "0") continue;
-                                                ImGui::TableSetColumnIndex(column);
-                                                ImGui::Text("%s", data.data[row][column].KodeSaham.c_str());
-                                                ImGui::TableSetColumnIndex(column + 1);
-                                                ImGui::Text("%s", data.formatCurrencyString(data.data[row][0].OpenPrice).c_str());
-                                                ImGui::TableSetColumnIndex(column + 2);
-                                                ImGui::Text("%s", data.formatCurrencyString(data.data[row][0].Penutupan).c_str());
-                                                ImGui::TableSetColumnIndex(column + 3);
-                                                ImGui::Text("%s", data.formatCurrencyString(data.data[row][0].Selisih).c_str());
-                                                ImGui::TableSetColumnIndex(column + 4);
-                                                ImGui::Text("%s", data.formatCurrencyString(data.data[row][0].Volume).c_str());
-                                                ImGui::TableSetColumnIndex(column + 5);
-                                                ImGui::Text("%s", data.formatCurrencyString(data.data[row][0].Frekuensi).c_str());
-                                            }
+                                            ImGui::TableSetColumnIndex(0);
+                                            ImGui::Text("%s", data.data[row].KodeSaham.c_str());
+                                            ImGui::TableSetColumnIndex(1);
+                                            ImGui::Text("%s", data.formatCurrencyString(data.data[row].OpenPrice).c_str());
+                                            ImGui::TableSetColumnIndex(2);
+                                            ImGui::Text("%s", data.formatCurrencyString(data.data[row].Penutupan).c_str());
+                                            ImGui::TableSetColumnIndex(3);
+                                            ImGui::Text("%s", data.formatCurrencyString(data.data[row].Selisih).c_str());
+                                            ImGui::TableSetColumnIndex(4);
+                                            ImGui::Text("%s", data.formatCurrencyString(data.data[row].Volume).c_str());
+                                            ImGui::TableSetColumnIndex(5);
+                                            ImGui::Text("%s", data.formatCurrencyString(data.data[row].Frekuensi).c_str());
                                         }
                                         ImGui::EndTable();
                                     }
@@ -368,42 +366,41 @@ int main(int, char**)
 
                             // Greedy Solution
                             {
-                                static bool selected_item[10];
                                 ImGui::BeginChild("list_greedy", ImVec2(1400, list_market.size() * 30), true);
                                 ImGui::Text("Greedy:");
                                 static ImGuiTableFlags flags_table = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
-                                if(data.allOK){
-                                    
-                                if (ImGui::BeginTable("tb_greedy", 6, flags_table, ImVec2(1400, 0))) {
-                                    ImGui::TableSetupColumn(data.column[0][0].KodeSaham.c_str(), ImGuiTableColumnFlags_WidthFixed);
-                                    ImGui::TableSetupColumn(data.column[0][0].OpenPrice.c_str(), ImGuiTableColumnFlags_WidthFixed);
-                                    ImGui::TableSetupColumn(data.column[0][0].Penutupan.c_str(), ImGuiTableColumnFlags_WidthFixed);
-                                    ImGui::TableSetupColumn("Total lot", ImGuiTableColumnFlags_WidthFixed);
-                                    ImGui::TableSetupColumn("Total Cost", ImGuiTableColumnFlags_WidthFixed);
-                                    ImGui::TableSetupColumn("Est. Profit", ImGuiTableColumnFlags_WidthFixed);
+                                if (data.allOK) {
 
-                                    ImGui::TableHeadersRow();
+                                    if (ImGui::BeginTable("tb_greedy", 6, flags_table, ImVec2(1400, 0))) {
+                                        ImGui::TableSetupColumn(data.column[0].KodeSaham.c_str());
+                                        ImGui::TableSetupColumn(data.column[0].OpenPrice.c_str());
+                                        ImGui::TableSetupColumn(data.column[0].Penutupan.c_str());
+                                        ImGui::TableSetupColumn("Total lot");
+                                        ImGui::TableSetupColumn("Total Cost");
+                                        ImGui::TableSetupColumn("Est. Profit");
 
-                                    for (int row = 0; row < data.sort_market.size(); ++row) {
-                                        if (data.sort_market[row][0].OpenPrice == "0") continue;
-                                        ImGui::TableNextRow();
-                                        ImGui::TableSetColumnIndex(0);
-                                        ImGui::Selectable(data.sort_market[row][0].KodeSaham.c_str(), data.solution[row], ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap);
-                                        ImGui::TableSetColumnIndex(1);
-                                        ImGui::Text("%s", data.formatCurrencyString(data.sort_market[row][0].OpenPrice).c_str());
-                                        ImGui::TableSetColumnIndex(2);
-                                        ImGui::Text("%s", data.formatCurrencyString(data.sort_market[row][0].Penutupan).c_str());
-                                        ImGui::TableSetColumnIndex(3);
-                                        ImGui::Text("%s", data.formatCurrencyInt(data.sort_market[row][0].total_lot).c_str());
-                                        ImGui::TableSetColumnIndex(4);
-                                        ImGui::Text("%s", data.formatCurrencyInt(data.sort_market[row][0].total_cost).c_str());
-                                        ImGui::TableSetColumnIndex(5);
-                                        ImGui::Text("%s", data.formatCurrencyInt(data.sort_market[row][0].total_shares_profit).c_str());
+                                        ImGui::TableHeadersRow();
+
+                                        for (int row = 0; row < data.sort_market.size(); ++row) {
+                                            ImGui::TableNextRow();
+                                            ImGui::TableSetColumnIndex(0);
+                                            ImGui::Selectable(data.sort_market[row].KodeSaham.c_str(), data.solution[row], ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap);
+                                            ImGui::TableSetColumnIndex(1);
+                                            ImGui::Text("%s", data.formatCurrencyString(data.sort_market[row].OpenPrice).c_str());
+                                            ImGui::TableSetColumnIndex(2);
+                                            ImGui::Text("%s", data.formatCurrencyString(data.sort_market[row].Penutupan).c_str());
+                                            ImGui::TableSetColumnIndex(3);
+                                            ImGui::Text("%s", data.formatCurrencyInt(data.sort_market[row].total_lot).c_str());
+                                            ImGui::TableSetColumnIndex(4);
+                                            ImGui::Text("%s", data.formatCurrencyInt(data.sort_market[row].total_cost).c_str());
+                                            ImGui::TableSetColumnIndex(5);
+                                            ImGui::Text("%s", data.formatCurrencyInt(data.sort_market[row].total_shares_profit).c_str());
+                                        }
+
+                                        ImGui::EndTable();
                                     }
-
-                                    ImGui::EndTable();
                                 }
-                                }
+                                else ImGui::Text("Data not found!!");
                                 ImGui::EndChild();
                                 ImGui::EndGroup();
 
@@ -414,99 +411,90 @@ int main(int, char**)
 
                                 ImGui::BeginChild("greedy", ImVec2(335, (list_market.size() * 30) * 2), true);
                                 ImGui::Text("Greedy : ");
-                                
-                                if (ImGui::BeginTable("split_greedy", 5, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
-                                {
-                                    for (int i = 0; i < data.sort_market.size(); ++i) {
-                                        for (int j = 0; j < data.sort_market[i].size(); ++j) {
-                                            if (data.sort_market[i][j].OpenPrice == "0") continue;
-                                                ImGui::TableNextColumn();
-                                                ImGui::Selectable(data.sort_market[i][j].KodeSaham.c_str(), data.solution[i]);
+                                if (data.allOK) {
+                                    if (ImGui::BeginTable("split_greedy", 5, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
+                                    {
+                                        for (int i = 0; i < data.sort_market.size(); ++i) {
+                                            if (data.sort_market[i].OpenPrice == "0") continue;
+                                            ImGui::TableNextColumn();
+                                            ImGui::Selectable(data.sort_market[i].KodeSaham.c_str(), data.solution[i]);
                                         }
+                                        ImGui::EndTable();
                                     }
-                                    ImGui::EndTable();
-                                }
 
-                                ImGui::Spacing();
+                                    ImGui::Spacing();
 
-                                ImGui::Text("\nEstimasi total Profit : %s", data.formatCurrencyInt(greedy.profit).c_str());
-                                ImGui::Text("\nTotal Cost : %s", data.formatCurrencyInt(greedy.cost).c_str());
-                                ImGui::Text("\nSisa Uang : %s", data.formatCurrencyInt(data.nominal - greedy.cost).c_str());
+                                    ImGui::Text("\nEstimasi total Profit : %s", data.formatCurrencyInt(greedy.profit).c_str());
+                                    ImGui::Text("\nTotal Cost : %s", data.formatCurrencyInt(greedy.cost).c_str());
+                                    ImGui::Text("\nSisa Uang : %s", data.formatCurrencyInt(data.nominal - greedy.cost).c_str());
+                                }else ImGui::Text("Data not found!!");
                                 ImGui::EndChild();
                                 ImGui::EndGroup();
                             }
 
                             // Dynamic Solution
-                            /*
                             {
                                 ImGui::BeginGroup();
                                 static ImGuiTableFlags flags_table = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg;
                                 ImGui::BeginChild("d_programing", ImVec2(1400, list_market.size() * 30), true);
                                 ImGui::Text("Dynamic Programming:");
 
-                                if (ImGui::BeginTable("tb_greedy", 4, flags_table)) {
+                                if (data.allOK) {
+                                    if (ImGui::BeginTable("tb_dynamic", 7, flags_table)) {
 
-                                    ImGui::TableSetupColumn("Jenis Investasi", 0.10f);
-                                    ImGui::TableSetupColumn("Cost");
-                                    ImGui::TableSetupColumn("Profit");
-                                    ImGui::TableSetupColumn("Ratio profit(Profit / Cost)");
+                                        ImGui::TableSetupColumn("berapa x diambil");
+                                        ImGui::TableSetupColumn(data.column[0].KodeSaham.c_str());
+                                        ImGui::TableSetupColumn(data.column[0].OpenPrice.c_str());
+                                        ImGui::TableSetupColumn(data.column[0].Penutupan.c_str());
+                                        ImGui::TableSetupColumn("Total lot");
+                                        ImGui::TableSetupColumn("Total Cost");
+                                        ImGui::TableSetupColumn("Est. Profit");
 
-                                    ImGui::TableHeadersRow();
+                                        ImGui::TableHeadersRow();
+                                        if(data.data_dp.size() > 0)
+                                        for (int i = 0; i < data.data_dp.size(); ++i) {
+                                            ImGui::TableNextRow();
+                                            ImGui::TableSetColumnIndex(0);
+                                            ImGui::Text("%d", data.data_dp[i].take);
+                                            ImGui::TableSetColumnIndex(1);
+                                            ImGui::Text("%s", data.data_dp[i].KodeSaham.c_str());
+                                            ImGui::TableSetColumnIndex(2);
+                                            ImGui::Text("%s", data.data_dp[i].OpenPrice.c_str());
+                                            ImGui::TableSetColumnIndex(3);
+                                            ImGui::Text("%s", data.data_dp[i].Penutupan.c_str());
+                                            ImGui::TableSetColumnIndex(4);
+                                            ImGui::Text("%s", data.formatCurrencyInt(data.data_dp[i].total_lot).c_str());
+                                            ImGui::TableSetColumnIndex(5);
+                                            ImGui::Text("%s", data.formatCurrencyInt(data.data_dp[i].total_cost).c_str());
+                                            ImGui::TableSetColumnIndex(6);
+                                            ImGui::Text("%s", data.formatCurrencyInt(data.data_dp[i].total_shares_profit).c_str());
 
-                                    for (int row = 0; row < list_market.size(); ++row) {
-                                        char label[32];
-                                        ImGui::TableNextRow();
-                                        ImGui::TableSetColumnIndex(0);
-                                        ImGui::Selectable(std::get<0>(list_market[row]).c_str(), &data.solution[row]);
-                                        ImGui::TableSetColumnIndex(1);
-                                        ImGui::Selectable(std::to_string(std::get<1>(list_market[row])).c_str(), &data.solution[row]);
-                                        ImGui::TableSetColumnIndex(2);
-                                        ImGui::Selectable(std::to_string(std::get<2>(list_market[row])).c_str(), &data.solution[row]);
+                                        }
                                     }
 
                                     ImGui::EndTable();
                                 }
+                                else ImGui::Text("Data not found!!");
 
                                 ImGui::EndChild();
-                                ImGui::EndGroup();
+                                ImGui::EndGroup(); ImGui::SameLine();
 
-                                ImGui::SameLine();
-
+                                // summary dp
                                 ImGui::BeginGroup();
-                                Greedy_h* greedy = new Greedy_h();
 
-                                ImGui::BeginChild("dp", ImVec2(335, (list_market.size() * 30)), true);
+                                ImGui::BeginChild("summary_dp", ImVec2(335, (list_market.size() * 30) * 2), true);
                                 ImGui::Text("Dynamic Programing : ");
-                                if (ImGui::BeginTable("split1", 5, ImGuiTableFlags_Resizable | ImGuiTableFlags_NoSavedSettings | ImGuiTableFlags_Borders))
-                                {
-                                    for (auto& it = list_market.begin(); it != list_market.end(); ++it) {
-                                        ImGui::TableNextColumn();
-                                        ImGui::Selectable(std::get<0>(*it).c_str(), &data.solution[std::get<3>(*it)]);
-                                    }
-
-
-                                    ImGui::EndTable();
+                                if (data.allOK) {
+                                    
+                                    ImGui::Text("\nEstimasi total Profit : %s", data.formatCurrencyInt(data.profit_dp).c_str());
+                                    ImGui::Text("\nTotal Cost : %s", data.formatCurrencyInt(data.cost_dp).c_str());
+                                    ImGui::Text("\nSisa Uang : %s", data.formatCurrencyInt(data.nominal - data.cost_dp).c_str());
                                 }
-                                ImGui::Spacing();
-
-                                ImGui::Text("Solusi Dynamic Programing :");
-
-                                //std::vector<bool> solution = std::get<2>(greedy->get_profit_cost(list_market, nominal));
-                                //std::reverse(solution.begin(), solution.end());
-                                for (int i = 0; i < 5; ++i)
-                                    //selected_item[std::get<3>(list_market[i])] = solution[std::get<3>(list_market[i])];
-                                for (int i = 0; i < 5; ++i) {
-                                    ImGui::SameLine();
-                                    ImGui::Text("%d ", data.solution[std::get<3>(list_market[i])]);
-                                }
-
-                                //ImGui::Text("\nTotal Profit : %d", std::get<0>(greedy->get_profit_cost(list_market, nominal)));
-                                //ImGui::Text("\nTotal Cost : %d", std::get<1>(greedy->get_profit_cost(list_market, nominal)));
+                                else ImGui::Text("Data not found!!");
                                 ImGui::EndChild();
                                 ImGui::EndGroup();
 
                             }
-                            */
                             ImGui::EndTabItem();
                         }
                         
