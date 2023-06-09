@@ -7,7 +7,7 @@ std::vector<bool> Dynamic::dp(std::vector<values>data, int total_money) {
     std::vector<int> w(n);
     std::vector<int> p(n);
 
-    // Mengisi vektor berat dan nilai dari data
+    // Mengisi vektor berat dengan cost dan nilai dari data(profit)
     for (int i = 0; i < n; i++) {
         w[i] = data[i].total_cost;
         p[i] = data[i].total_shares_profit;
