@@ -184,15 +184,11 @@ public:
     bool file_button = false;
     bool allOK = false;
     bool solution_button = false;
+
     int nominal = 100000;
     int qty_lot = 1;
-    // dp
-    int cost_dp = 0;
-    int profit_dp = 0;
-    std::vector<bool> solution_dp;
-    std::vector<values> data_dp;
-
-    std::vector<bool> solution;
+    
+    
     std::string file_path,file_name;
     std::vector<values> data;
     std::vector<values> sort_market;
@@ -350,7 +346,6 @@ public:
             return false;
     }
 
-    
     void calculate(std::vector<values>& data, int nominal,int lot) {
         for (int i = 0; i < data.size(); i++) {
             if (data[i].OpenPrice == "0") {
@@ -393,21 +388,26 @@ public:
             });
         return list_market;
     }
-    int findMaxProfit(std::vector<values>& data, int total_money) {
-        std::vector<int> dp(total_money + 1, 0);
-        int cost = 0;
-        
-        for (int i = 1; i <= total_money; i++) {
-            for (int j = 0; j < data.size(); j++) {
-                if (data[j].total_cost <= i && data[j].total_shares_profit > 0) {
-                    dp[i] = max(dp[i], dp[i - data[j].total_cost] + data[j].total_shares_profit);
-                    data[j].take += 1;
-                    cost += data[j].total_cost;
-                }
-            }
-        }
-        this->cost_dp = cost;
 
-        return dp[total_money];
+    // Function Sorting By Profit
+    std::vector<values> Sort_market(std::vector<values> list_market) {
+        std::sort(list_market.begin(), list_market.end(), [](const values& a, const values& b) {
+            if (a.total_shares_profit != b.total_shares_profit)
+            return a.total_shares_profit > b.total_shares_profit;
+            else
+                return a.total_cost < b.total_cost;
+            });
+        return list_market;
+    }
+
+    // Function Unsorted Market
+    std::vector<values> unsorted_market(std::vector<values> list_market) {
+        std::sort(list_market.begin(), list_market.end(), [](const values& a, const values& b) {
+            if (a.total_shares_profit != b.total_shares_profit)
+            return a.total_shares_profit < b.total_shares_profit;
+            else
+                return a.total_cost > b.total_cost;
+            });
+        return list_market;
     }
 };

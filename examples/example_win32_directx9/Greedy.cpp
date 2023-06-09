@@ -1,27 +1,4 @@
 #include "Greedy_h.h"
-
-// Function Sorting By Profit
-std::vector<values> Greedy_h::sort_market(std::vector<values> list_market) {
-    std::sort(list_market.begin(), list_market.end(), [](const values& a, const values& b) {
-        if (a.total_shares_profit != b.total_shares_profit)
-        return a.total_shares_profit > b.total_shares_profit;
-        else
-            return a.total_cost < b.total_cost;
-        });
-    return list_market;
-}
-
-// Function Unsorted Market
-std::vector<values> Greedy_h::unsorted_market(std::vector<values> list_market) {
-    std::sort(list_market.begin(), list_market.end(), [](const values& a, const values& b) {
-        if (a.total_shares_profit != b.total_shares_profit)
-            return a.total_shares_profit < b.total_shares_profit;
-        else
-            return a.total_cost > b.total_cost;
-        });
-    return list_market;
-}
-
 std::vector<bool> Greedy_h::Solution_Greedy(std::vector<values> data, int nominal) {
     std::vector<bool> solution;
     int total_cost = 0;
@@ -50,12 +27,4 @@ std::vector<bool> Greedy_h::Solution_Greedy(std::vector<values> data, int nomina
     this->total_lot = total_lot;
 
     return solution;
-}
-
-bool* Greedy_h::vector_to_array(vector<bool> v) {
-    bool* arr = new bool[v.size()];
-    for (int i = 0; i < v.size(); i++) {
-        arr[i] = v[i];
-    }
-    return arr;
 }
