@@ -9,7 +9,7 @@ std::vector<bool> Dynamic::dp(std::vector<values>data, int total_money) {
 
     // Mengisi vektor berat dan nilai dari data
     for (int i = 0; i < n; i++) {
-        w[i] = std::stoi(data[i].OpenPrice);
+        w[i] = data[i].total_cost;
         p[i] = data[i].total_shares_profit;
     }
 
