@@ -177,6 +177,51 @@ int main(int, char**)
                         show_demo_window = !show_demo_window;
                     }
 
+                    // export data
+                    if (ImGui::MenuItem("Export Data Sort", NULL, false)) {
+                        if (data.sort_market.size() > 1) {
+                            std::ofstream myfile;
+                            myfile.open("data.txt");
+
+                            if (myfile.is_open()) {
+                                std::stringstream ss;
+                                for (int i = 0; i < data.sort_market.size(); ++i)
+                                    ss << "Kode Saham: " << data.sort_market[i].KodeSaham << " | "
+                                    << "Nama Perusahaan: " << data.sort_market[i].NamaPerusahaan << " | "
+                                    << "Remarks: " << data.sort_market[i].Remarks << " | "
+                                    << "Sebelumnya: " << data.sort_market[i].Sebelumnya << " | "
+                                    << "Open Price: " << data.sort_market[i].OpenPrice << " | "
+                                    << "Tanggal Perdagangan Terakhir: " << data.sort_market[i].TanggalPerdaganganTerakhir << " | "
+                                    << "First Trade: " << data.sort_market[i].FirstTrade << " | "
+                                    << "Tertinggi: " << data.sort_market[i].Tertinggi << " | "
+                                    << "Terendah: " << data.sort_market[i].Terendah << " | "
+                                    << "Penutupan: " << data.sort_market[i].Penutupan << " | "
+                                    << "Selisih: " << data.sort_market[i].Selisih << " | "
+                                    << "Volume: " << data.sort_market[i].Volume << " | "
+                                    << "Nilai: " << data.sort_market[i].Nilai << " | "
+                                    << "Frekuensi: " << data.sort_market[i].Frekuensi << " | "
+                                    << "Index Individual: " << data.sort_market[i].IndexIndividual << " | "
+                                    << "Offer: " << data.sort_market[i].Offer << " | "
+                                    << "Offer Volume: " << data.sort_market[i].OfferVolume << " | "
+                                    << "Bid: " << data.sort_market[i].Bid << " | "
+                                    << "Bid Volume: " << data.sort_market[i].BidVolume << " | "
+                                    << "Listed Shares: " << data.sort_market[i].ListedShares << " | "
+                                    << "Tradeble Shares: " << data.sort_market[i].TradebleShares << " | "
+                                    << "Weight For Index: " << data.sort_market[i].WeightForIndex << " | "
+                                    << "Foreign Sell: " << data.sort_market[i].ForeignSell << " | "
+                                    << "Foreign Buy: " << data.sort_market[i].ForeignBuy << " | "
+                                    << "Non-Regular Volume: " << data.sort_market[i].NonRegularVolume << " | "
+                                    << "Non-Regular Value: " << data.sort_market[i].NonRegularValue << " | "
+                                    << "Non-Regular Frequency: " << data.sort_market[i].NonRegularFrequency;
+
+                                std::string line = ss.str();
+                                myfile << line;
+
+                                myfile.close();
+                            }
+                        }
+                    }
+
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenuBar();
@@ -500,8 +545,9 @@ int main(int, char**)
 
                     ImGui::EndTabBar();
                 }
-                if(console)
-                    data.logs.Draw("Console", &console);
+                if (console) {
+                    global_logs.Draw("Console", &console);
+                }
                 ImGui::EndChild();
                 ImGui::EndGroup();
             }

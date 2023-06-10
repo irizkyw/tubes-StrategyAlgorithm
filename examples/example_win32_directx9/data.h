@@ -141,7 +141,6 @@ struct AppLogs
         ImGui::End();
     }
 };
-
 struct values {
     int no = 0;
     std::string KodeSaham;
@@ -177,7 +176,7 @@ struct values {
     int total_shares_profit = 0; // (harga penutupan - harga pembukaan) x jumlah saham
     int take = 0;
 };
-
+static AppLogs global_logs;
 class Data
 {
 public:
@@ -193,7 +192,6 @@ public:
     std::vector<values> data;
     std::vector<values> sort_market;
     std::vector<values> column;
-    AppLogs logs;
 
     void openFile(HWND hWnd, std::string &file_path, std::string &file_name) {
         std::ofstream saveFile("logs.ini");
@@ -224,8 +222,8 @@ public:
             file_name = file_path.substr(filePos);
             saveFile << "\nName Txt : " << file_name << std::endl;
 
-            logs.AddLog("Path Txt : %s\n", file_path.c_str());
-            logs.AddLog("Name Txt : %s\n", file_name.c_str());
+            global_logs.AddLog("Path Txt : %s\n", file_path.c_str());
+            global_logs.AddLog("Name Txt : %s\n", file_name.c_str());
             saveFile.close();
         }
     }
@@ -308,7 +306,7 @@ public:
         column.push_back(data[0]);
         data.erase(data.begin());
 
-        logs.AddLog("[INFO] Load Data Success\n");
+        global_logs.AddLog("[INFO] Load Data Success\n");
     }
 
     void dropRowsWithZeroOpenPrice(std::vector<values>& list_market) {
@@ -325,16 +323,16 @@ public:
 
     bool checkBtn(HWND hWnd) {
         if (file_button) {
-            logs.AddLog("[INFO] Load Data!!\n");
-            logs.AddLog("[WARNING] Clear Data!!\n");
+            global_logs.AddLog("[INFO] Load Data!!\n");
+            global_logs.AddLog("[WARNING] Clear Data!!\n");
             this->data.clear();
             this->column.clear();
             this->allOK = false;
-            logs.AddLog("[INFO] Clear Data Success!!\n");
+            global_logs.AddLog("[INFO] Clear Data Success!!\n");
             openFile(hWnd,file_path, file_name);
             readFile(file_path);
             dropRowsWithZeroOpenPrice(this->data);
-            logs.AddLog("[INFO] Load Data Success!!\n");
+            global_logs.AddLog("[INFO] Load Data Success!!\n");
         }
 
         if (this->data.size() > 0) {
@@ -390,6 +388,7 @@ public:
     }
 
     // Function Sorting By Profit
+    /*
     std::vector<values> Sort_market(std::vector<values> list_market) {
         std::sort(list_market.begin(), list_market.end(), [](const values& a, const values& b) {
             if (a.total_shares_profit != b.total_shares_profit)
@@ -399,6 +398,7 @@ public:
             });
         return list_market;
     }
+    */
 
     // Function Unsorted Market
     std::vector<values> unsorted_market(std::vector<values> list_market) {
@@ -410,4 +410,51 @@ public:
             });
         return list_market;
     }
+
+
+    // Fungsi quick sort
+    void quickSort(std::vector<values>& arr, int low, int high) {
+        if (low < high) {
+            // Partisi array
+            int pivot = partition(arr, low, high);
+
+            // Rekursif untuk subarray sebelum dan setelah pivot
+            quickSort(arr, low, pivot - 1);
+            quickSort(arr, pivot + 1, high);
+        }
+    }
+
+    // Fungsi partisi untuk quick sort
+    int partition(std::vector<values>& arr, int low, int high) {
+        values pivot = arr[high];
+        int i = (low - 1);
+
+        for (int j = low; j <= high - 1; j++) {
+            // Jika elemen saat ini lebih kecil atau sama dengan pivot
+            if (arr[j].total_shares_profit > pivot.total_shares_profit ||
+                (arr[j].total_shares_profit == pivot.total_shares_profit && arr[j].total_cost < pivot.total_cost)) {
+                i++;  // Increment indeks dari elemen yang lebih kecil
+
+                // Tukar elemen arr[i] dan arr[j]
+                values temp = arr[i];
+                arr[i] = arr[j];
+                arr[j] = temp;
+            }
+        }
+
+        // Tukar elemen arr[i + 1] dan arr[high] (pivot)
+        values temp = arr[i + 1];
+        arr[i + 1] = arr[high];
+        arr[high] = temp;
+
+        return (i + 1);
+    }
+
+    // Panggil quickSort dari fungsi utama
+    std::vector<values> Sort_market(std::vector<values> list_market) {
+        int size = list_market.size();
+        quickSort(list_market, 0, size - 1);
+        return list_market;
+    }
+
 };

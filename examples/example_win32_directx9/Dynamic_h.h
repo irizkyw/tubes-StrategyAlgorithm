@@ -2,8 +2,6 @@
 
 class Dynamic {
 public:
-    Data C_data;
-
     // dp
     int cost_dp = 0;
     int profit_dp = 0;

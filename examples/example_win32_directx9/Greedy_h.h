@@ -5,7 +5,6 @@ using namespace std;
 class Greedy_h
 {
 public:
-        Data C_data;
         int cost = 0;
         int profit = 0;
         int total_lot = 0;

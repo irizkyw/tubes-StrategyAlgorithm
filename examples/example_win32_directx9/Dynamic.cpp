@@ -27,6 +27,13 @@ std::vector<bool> Dynamic::dp(std::vector<values>data, int total_money) {
         }
     }
 
+
+    // print table 0 - 10
+    for (int i = 0; i <= 10; ++i) {
+        for (int j = 0; j <= 5; ++j) {
+            global_logs.AddLog("%d ", table[i][j]);
+        }
+    }
     std::vector<bool> solution(data.size(), 0);
     int curr_w = total_money;
     int curr_i = data.size();
@@ -46,7 +53,7 @@ std::vector<bool> Dynamic::dp(std::vector<values>data, int total_money) {
     }
     for (int i = 0; i < solution.size(); i++) {
         if (solution[i] == 1) {
-            C_data.logs.AddLog("%s\n", data[i].KodeSaham.c_str());
+            global_logs.AddLog("%s\n", data[i].KodeSaham.c_str());
         }
     }
     this->cost_dp = cost;
